@@ -5,6 +5,7 @@ import com.example.photosdemo.data.Repository
 import com.example.photosdemo.data.models.image.ImageDtoIn
 import com.example.photosdemo.data.models.image.ImageDtoOut
 import com.example.photosdemo.data.models.security.SignUserDtoIn
+import com.example.photosdemo.util.Resource
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -14,57 +15,42 @@ class PhotosViewModel(
     ): ViewModel() {
 
     private val scope = CoroutineScope(Dispatchers.IO)
-    val photoLive: MutableLiveData<MutableList<ImageDtoOut?>?> by lazy {
-        MutableLiveData<MutableList<ImageDtoOut?>?>()
-    }
-    val userToken: MutableLiveData<String?> by lazy {
-        MutableLiveData<String?>()
+    val userToken: MutableLiveData<String> by lazy {
+        MutableLiveData<String>()
     }
     private val pageSize: Int = 0
     var selectedImage: ImageDtoOut? = null
 
     fun postSignUp(userDto: SignUserDtoIn) {
         scope.launch {
-            repository.postSignUp(userDto)
+            val data = repository.postSignUp(userDto)
+            val token = data?.data?.token
+            userToken.postValue(token)
         }
     }
 
     fun postSignIn(userDto: SignUserDtoIn) {
         scope.launch {
-            repository.postSignIn(userDto)
+            val data = repository.postSignIn(userDto)
+            val token = data?.data?.token
+            userToken.postValue(token)
         }
     }
 
-    fun getImageOut() {
-        scope.launch {
-            val data = userToken.value?.let {
-                repository.getImageOut(
-                    it,
-                    pageSize
-                )
-            }
-            photoLive.postValue(data?.toMutableList())
-        }
+    fun getImages(token: String): LiveData<Resource<MutableList<ImageDtoOut>>> {
+        val data = repository.getImageOut(token, pageSize)
+        return data.asLiveData()
     }
 
     fun postImageOut(imageDtoIn: ImageDtoIn) {
         scope.launch {
-            repository.postImageOut(userToken.value!!, imageDtoIn)
-            getImageOut()
+            repository.postImageOut(userToken.value!!, imageDtoIn, pageSize)
         }
     }
 
     fun deleteImageOut(id: Int) {
         scope.launch {
             repository.deleteImageOut(userToken.value!!, id)
-            getImageOut()
-        }
-    }
-
-    fun getToken() {
-        scope.launch {
-             val data = repository.getToken()
-            userToken.postValue(data)
         }
     }
 }

@@ -5,33 +5,20 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.example.photosdemo.data.models.image.ImageDtoOut
-import com.example.photosdemo.data.models.security.SignUserOutDto
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface PhotosDao {
 
-    @Insert (onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertImageDtoOut(image: ImageDtoOut)
-
-    @Insert (onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAllImageDtoOut(image: MutableList<ImageDtoOut?>)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertImages(list: MutableList<ImageDtoOut>)
 
     @Query("SELECT * FROM image")
-    suspend fun getImageDtoOutList(): MutableList<ImageDtoOut>
-
-    @Query ("SELECT * FROM image WHERE id = :id")
-    suspend fun getImageDtoOutById(id: Int): ImageDtoOut
-
-    @Query("DELETE FROM image")
-    suspend fun clearImageDtoOut()
+    fun getAllImages(): Flow<MutableList<ImageDtoOut>>
 
     @Query("DELETE from image WHERE id IN (:id)")
     suspend fun deleteImageDtoOut(id: Int)
 
-
-    @Insert (onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertToken(token: SignUserOutDto?)
-
-    @Query ("SELECT token FROM token")
-    suspend fun getToken(): String
+    @Query("DELETE FROM image")
+    suspend fun deleteAllImages()
 }

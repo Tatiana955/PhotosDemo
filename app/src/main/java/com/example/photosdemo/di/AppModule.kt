@@ -2,6 +2,7 @@ package com.example.photosdemo.di
 
 import android.content.Context
 import androidx.room.Room
+import com.example.photosdemo.data.remote.AuthInterceptor
 import com.example.photosdemo.data.Repository
 import com.example.photosdemo.data.local.PhotosDatabase
 import com.example.photosdemo.data.remote.ApiService
@@ -26,13 +27,14 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideApi(): ApiService {
+    fun provideApi(@ApplicationContext context: Context): ApiService {
         val interceptor = HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
         val okHttpClient = OkHttpClient.Builder()
             .connectTimeout(30, TimeUnit.SECONDS)
             .writeTimeout(30, TimeUnit.SECONDS)
             .readTimeout(120, TimeUnit.SECONDS)
             .addInterceptor(interceptor)
+            .addInterceptor(AuthInterceptor(context))
             .build()
         val retrofit: Retrofit = Retrofit.Builder()
             .baseUrl(BASE_URL)

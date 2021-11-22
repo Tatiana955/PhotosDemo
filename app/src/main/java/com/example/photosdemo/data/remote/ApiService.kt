@@ -13,18 +13,18 @@ interface ApiService {
     @POST("api/account/signup")
     suspend fun postSignUp(
         @Body userDto: SignUserDtoIn
-    ): ResponseDto?
+    ): ResponseDto
 
     @POST("api/account/signin")
     suspend fun postSignIn(
         @Body userDto: SignUserDtoIn
-    ): ResponseDto?
+    ): ResponseDto
 
     @GET("api/image")
     suspend fun getImageOut(
         @Header("Access-Token") access_token: String,
         @Query("page") page: Int
-    ): ResponseDtoImage?
+    ): ResponseDtoImage
 
     @POST("api/image")
     suspend fun postImageOut(

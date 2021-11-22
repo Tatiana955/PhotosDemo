@@ -11,7 +11,6 @@ import androidx.navigation.fragment.findNavController
 import com.example.photosdemo.R
 import com.example.photosdemo.databinding.FragmentLoginBinding
 import com.example.photosdemo.viewmodel.PhotosViewModel
-import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayoutMediator
 
 class LoginFragment : Fragment() {
@@ -46,14 +45,6 @@ class LoginFragment : Fragment() {
                 }
             }
         }.attach()
-
-        viewModel.userToken.observe(viewLifecycleOwner, {
-            if (it != null) {
-                navController?.navigate(R.id.photosFragment)
-            } else {
-                Snackbar.make(view, "Check the correctness of the entered data", Snackbar.LENGTH_SHORT).show()
-            }
-        })
     }
 
     override fun onDestroyView() {

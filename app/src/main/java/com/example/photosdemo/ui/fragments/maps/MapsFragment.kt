@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
 import com.example.photosdemo.R
 import com.example.photosdemo.data.models.image.ImageDtoOut
+import com.example.photosdemo.data.remote.SessionManager
 import com.example.photosdemo.databinding.FragmentMapsBinding
 import com.example.photosdemo.viewmodel.PhotosViewModel
 import com.google.android.gms.maps.GoogleMap
@@ -20,6 +21,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback  {
     private val binding get() = _binding!!
     private lateinit var googleMap: GoogleMap
     private lateinit var viewModel: PhotosViewModel
+    private lateinit var sessionManager: SessionManager
     private val photos = mutableListOf<ImageDtoOut?>()
 
     override fun onCreateView(
@@ -35,13 +37,14 @@ class MapsFragment : Fragment(), OnMapReadyCallback  {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        sessionManager = SessionManager(requireContext())
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
         mapFragment?.getMapAsync(this)
 
-        viewModel.photoLive.observe(viewLifecycleOwner, {
+        viewModel.getImages(sessionManager.fetchAuthToken()!!).observe(viewLifecycleOwner, {
             photos.clear()
             if (it != null) {
-                photos.addAll(it)
+                it.data?.let { list -> photos.addAll(list) }
             }
         })
     }

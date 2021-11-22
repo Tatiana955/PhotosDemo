@@ -29,6 +29,7 @@ import com.example.photosdemo.BuildConfig
 import com.example.photosdemo.R
 import com.example.photosdemo.data.models.image.ImageDtoIn
 import com.example.photosdemo.data.models.image.ImageDtoOut
+import com.example.photosdemo.data.remote.SessionManager
 import com.example.photosdemo.databinding.FragmentPhotosBinding
 import com.example.photosdemo.viewmodel.PhotosViewModel
 import java.io.ByteArrayOutputStream
@@ -41,7 +42,8 @@ class PhotosFragment : Fragment(), LocationListener {
     private val binding get() = _binding!!
     private var navController: NavController? = null
     private lateinit var viewModel: PhotosViewModel
-    private lateinit var adapter: PhotosAdapterAsync
+    private lateinit var sessionManager: SessionManager
+    private lateinit var adapter: PhotosAdapter
     private val photos = mutableListOf<ImageDtoOut?>()
 
     private var latestTmpUri: Uri? = null
@@ -81,23 +83,22 @@ class PhotosFragment : Fragment(), LocationListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         navController = findNavController()
+        sessionManager = SessionManager(requireContext())
+        adapter = PhotosAdapter(this)
 
-        viewModel.getImageOut()
+        binding.apply {
+            recyclerView.adapter = adapter
+            recyclerView.layoutManager = GridLayoutManager(requireContext(), 3)
 
-        adapter = PhotosAdapterAsync(this)
-        binding.recyclerView.adapter = adapter
-        binding.recyclerView.layoutManager = GridLayoutManager(requireContext(), 3)
-
-        viewModel.photoLive.observe(requireActivity(), {
-            photos.clear()
-            if (it != null) {
-                photos.addAll(it)
-                adapter.submitList(it)
+            viewModel.getImages(sessionManager.fetchAuthToken()!!).observe(viewLifecycleOwner) { result ->
+                photos.clear()
+                result.data?.let { photos.addAll(it) }
+                adapter.submitList(result.data)
             }
-        })
 
-        binding.floatingActionButton.setOnClickListener {
-            takeImage()
+            floatingActionButton.setOnClickListener {
+                takeImage()
+            }
         }
     }
 

@@ -1,17 +1,27 @@
 package com.example.photosdemo.data.local
 
-import androidx.room.Database
-import androidx.room.RoomDatabase
+import androidx.room.*
+import androidx.room.migration.AutoMigrationSpec
 import com.example.photosdemo.data.models.image.ImageDtoOut
-import com.example.photosdemo.data.models.security.SignUserOutDto
 
 @Database(
+    version = 2,
+    exportSchema = true,
     entities = [
-        ImageDtoOut::class,
-        SignUserOutDto::class
-               ],
-    exportSchema = false,
-    version = 1)
+        ImageDtoOut::class
+    ],
+    autoMigrations = [
+        AutoMigration(
+            from = 1,
+            to = 2,
+            spec = PhotosDatabase.DeleteTokenMigration::class
+        )
+    ]
+)
+
 abstract class PhotosDatabase: RoomDatabase() {
     abstract fun photosDao(): PhotosDao
+
+    @DeleteTable(tableName = "token")
+    class DeleteTokenMigration : AutoMigrationSpec
 }

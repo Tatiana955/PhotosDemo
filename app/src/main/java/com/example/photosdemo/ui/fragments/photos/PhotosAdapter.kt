@@ -1,54 +1,21 @@
 package com.example.photosdemo.ui.fragments.photos
 
-import android.text.TextUtils
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
-import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
-import com.example.photosdemo.R
 import com.example.photosdemo.data.models.image.ImageDtoOut
+import com.example.photosdemo.databinding.PhotoLayoutBinding
 
-class PhotosAdapterAsync(
+class PhotosAdapter(
     val fragment: PhotosFragment
-    ) : RecyclerView.Adapter<PhotosAdapterAsync.PhotosAsyncViewHolder>() {
+    ) : ListAdapter<ImageDtoOut, PhotosAdapter.PhotosViewHolder>(PhotoComparator()) {
 
-    private val mDiffer: AsyncListDiffer<ImageDtoOut>
-
-    private val diffCallback: DiffUtil.ItemCallback<ImageDtoOut> = object : DiffUtil.ItemCallback<ImageDtoOut>() {
-
-        override fun areItemsTheSame(oldItem: ImageDtoOut, newItem: ImageDtoOut): Boolean {
-            return TextUtils.equals(oldItem.id.toString(), newItem.id.toString())
-        }
-
-        override fun areContentsTheSame(oldItem: ImageDtoOut, newItem: ImageDtoOut): Boolean {
-            return oldItem.url == newItem.url
-        }
-    }
-
-    init {
-        mDiffer = AsyncListDiffer(this, diffCallback)
-    }
-
-    override fun getItemCount(): Int {
-        return mDiffer.currentList.size
-    }
-
-    fun submitList(data: MutableList<ImageDtoOut?>) {
-        mDiffer.submitList(data)
-    }
-
-    private fun getItem(position: Int): ImageDtoOut {
-        return mDiffer.currentList[position]
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PhotosAsyncViewHolder {
-        val itemView: View = LayoutInflater.from(parent.context).inflate(R.layout.photo_layout, parent, false)
-        val holder = PhotosAsyncViewHolder(itemView)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PhotosViewHolder {
+        val binding = PhotoLayoutBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val holder = PhotosViewHolder(binding)
 
         holder.itemView.setOnClickListener {
             fragment.navToDetails(holder.absoluteAdapterPosition)
@@ -61,17 +28,28 @@ class PhotosAdapterAsync(
         return holder
     }
 
-    override fun onBindViewHolder(holder: PhotosAsyncViewHolder, position: Int) {
-        holder.setData(getItem(position))
+    override fun onBindViewHolder(holder: PhotosViewHolder, position: Int) {
+        val currentItem = getItem(position)
+        if (currentItem != null) {
+            holder.bind(currentItem)
+        }
     }
 
-    class PhotosAsyncViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val photo: ImageView = itemView.findViewById(R.id.photo)
-        private val date: TextView = itemView.findViewById(R.id.date)
+    class PhotosViewHolder(private val binding: PhotoLayoutBinding) : RecyclerView.ViewHolder(binding.root) {
 
-        fun setData(data: ImageDtoOut) {
-            photo.load(data.url)
-            date.text = data.date.toString()
+        fun bind(data: ImageDtoOut) {
+            binding.apply {
+                photo.load(data.url)
+                date.text = data.date.toString()
+            }
         }
+    }
+
+    class PhotoComparator : DiffUtil.ItemCallback<ImageDtoOut>() {
+        override fun areItemsTheSame(oldItem: ImageDtoOut, newItem: ImageDtoOut) =
+            oldItem.id == newItem.id
+
+        override fun areContentsTheSame(oldItem: ImageDtoOut, newItem: ImageDtoOut) =
+            oldItem == newItem
     }
 }
