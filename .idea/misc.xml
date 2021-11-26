@@ -3,23 +3,8 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/Android/Application/PhotosDemo/app/src/main/res/drawable/ic_baseline_add_24.xml" value="0.290625" />
-        <entry key="..\:/Android/Application/PhotosDemo/app/src/main/res/drawable/ic_baseline_person_24.xml" value="0.290625" />
-        <entry key="..\:/Android/Application/PhotosDemo/app/src/main/res/drawable/ic_baseline_photo_camera_24.xml" value="0.290625" />
-        <entry key="..\:/Android/Application/PhotosDemo/app/src/main/res/drawable/ic_launcher_background.xml" value="0.290625" />
-        <entry key="..\:/Android/Application/PhotosDemo/app/src/main/res/drawable/shape_details.xml" value="0.176" />
-        <entry key="..\:/Android/Application/PhotosDemo/app/src/main/res/layout/activity_main.xml" value="0.264" />
-        <entry key="..\:/Android/Application/PhotosDemo/app/src/main/res/layout/details_layout.xml" value="0.27447916666666666" />
-        <entry key="..\:/Android/Application/PhotosDemo/app/src/main/res/layout/fragment_details.xml" value="0.27447916666666666" />
-        <entry key="..\:/Android/Application/PhotosDemo/app/src/main/res/layout/fragment_login.xml" value="0.27447916666666666" />
-        <entry key="..\:/Android/Application/PhotosDemo/app/src/main/res/layout/fragment_maps.xml" value="0.27447916666666666" />
-        <entry key="..\:/Android/Application/PhotosDemo/app/src/main/res/layout/fragment_photos.xml" value="0.27447916666666666" />
-        <entry key="..\:/Android/Application/PhotosDemo/app/src/main/res/layout/fragment_sign_in.xml" value="0.27447916666666666" />
-        <entry key="..\:/Android/Application/PhotosDemo/app/src/main/res/layout/fragment_sign_up.xml" value="0.27447916666666666" />
-        <entry key="..\:/Android/Application/PhotosDemo/app/src/main/res/layout/nav_header.xml" value="0.27447916666666666" />
-        <entry key="..\:/Android/Application/PhotosDemo/app/src/main/res/layout/photo_layout.xml" value="0.27447916666666666" />
-        <entry key="..\:/Android/Application/PhotosDemo/app/src/main/res/menu/drawer.xml" value="0.27447916666666666" />
-        <entry key="..\:/Android/Application/PhotosDemo/app/src/main/res/xml/provider_paths.xml" value="0.1" />
+        <entry key="..\:/Android/Application/PhotosDemo/app/src/main/res/layout/fragment_details.xml" value="0.2" />
+        <entry key="..\:/Android/Application/PhotosDemo/app/src/main/res/layout/fragment_maps.xml" value="0.25181159420289856" />
       </map>
     </option>
   </component>

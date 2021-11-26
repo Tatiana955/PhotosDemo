@@ -44,7 +44,7 @@ class PhotosViewModel(
 
     fun postImageOut(imageDtoIn: ImageDtoIn) {
         scope.launch {
-            repository.postImageOut(userToken.value!!, imageDtoIn, pageSize)
+            userToken.value?.let { repository.postImageOut(it, imageDtoIn, pageSize) }
         }
     }
 
