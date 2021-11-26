@@ -4,7 +4,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:gravity="center">
     <ImageView
         android:id="@+id/photo"
         android:layout_width="100dp"
@@ -12,14 +13,13 @@
         android:layout_marginStart="5dp"
         android:layout_marginEnd="5dp"
         app:srcCompat="@drawable/ic_baseline_photo_camera_24"
-        android:contentDescription="Photo" />
+        android:contentDescription="@string/photo" />
     <TextView
         android:id="@+id/date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAlignment="center"
-        android:layout_gravity="center"
         android:layout_marginStart="5dp"
         android:layout_marginEnd="5dp"
-        android:text="Date"/>
+        android:text="@string/date"/>
 </LinearLayout>

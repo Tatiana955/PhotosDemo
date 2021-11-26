@@ -8,4 +8,10 @@
     <string name="date">Date</string>
     <string name="edit_comment">Edit Comment</string>
     <string name="send">Send</string>
+    <string name="comment">Comment</string>
+    <string name="add_photo">Add Photo</string>
+    <string name="password">Password</string>
+    <string name="log_in">LOG IN</string>
+    <string name="sign_up">SIGN UP</string>
+    <string name="username">Username</string>
 </resources>

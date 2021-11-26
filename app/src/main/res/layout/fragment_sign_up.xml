@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:hint="Login"
+        android:hint="@string/login"
         android:layout_marginBottom="10dp"
         android:layout_marginStart="50dp"
         android:layout_marginEnd="50dp"
@@ -24,7 +24,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:hint="Password"
+        android:hint="@string/password"
         android:layout_marginBottom="10dp"
         android:layout_marginStart="50dp"
         android:layout_marginEnd="50dp"
@@ -35,7 +35,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:hint="Password"
+        android:hint="@string/password"
         android:layout_marginBottom="10dp"
         android:layout_marginStart="50dp"
         android:layout_marginEnd="50dp"
@@ -49,6 +49,6 @@
         android:layout_marginEnd="50dp"
         android:layout_marginTop="20dp"
         android:layout_marginBottom="20dp"
-        android:text="SIGN UP" />
+        android:text="@string/sign_up" />
 
 </LinearLayout>

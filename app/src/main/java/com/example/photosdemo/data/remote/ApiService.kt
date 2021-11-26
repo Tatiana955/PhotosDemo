@@ -1,5 +1,7 @@
 package com.example.photosdemo.data.remote
 
+import com.example.photosdemo.data.models.comment.CommentDtoIn
+import com.example.photosdemo.data.models.comment.ResponseDtoComment
 import com.example.photosdemo.data.models.image.ImageDtoIn
 import com.example.photosdemo.data.models.image.ResponseDtoImage
 import com.example.photosdemo.data.models.security.ResponseDto
@@ -36,5 +38,26 @@ interface ApiService {
     suspend fun deleteImageOut(
         @Header("Access-Token") access_token: String,
         @Path("id") id: Int
+    )
+
+    @GET("/api/image/{imageId}/comment")
+    suspend fun getComment(
+        @Header("Access-Token") access_token: String,
+        @Path("imageId") imageId: Int,
+        @Query("page") page: Int
+    ): ResponseDtoComment
+
+    @POST("/api/image/{imageId}/comment")
+    suspend fun postComment(
+        @Header("Access-Token") access_token: String,
+        @Body commentDtoIn: CommentDtoIn,
+        @Path("imageId") imageId: Int
+    )
+
+    @DELETE("/api/image/{imageId}/comment/{commentId}")
+    suspend fun deleteComment(
+        @Header("Access-Token") access_token: String,
+        @Path("commentId") commentId: Int,
+        @Path("imageId") imageId: Int
     )
 }

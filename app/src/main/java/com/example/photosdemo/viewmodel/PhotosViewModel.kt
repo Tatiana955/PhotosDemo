@@ -2,6 +2,8 @@ package com.example.photosdemo.viewmodel
 
 import androidx.lifecycle.*
 import com.example.photosdemo.data.Repository
+import com.example.photosdemo.data.models.comment.CommentDtoIn
+import com.example.photosdemo.data.models.comment.CommentDtoOut
 import com.example.photosdemo.data.models.image.ImageDtoIn
 import com.example.photosdemo.data.models.image.ImageDtoOut
 import com.example.photosdemo.data.models.security.SignUserDtoIn
@@ -51,6 +53,23 @@ class PhotosViewModel(
     fun deleteImageOut(id: Int) {
         scope.launch {
             repository.deleteImageOut(userToken.value!!, id)
+        }
+    }
+
+    fun getComments(token: String): LiveData<Resource<MutableList<CommentDtoOut>>> {
+        val data = repository.getComments(token, selectedImage!!.id,pageSize)
+        return data.asLiveData()
+    }
+
+    fun postComment(commentDtoIn: CommentDtoIn) {
+        scope.launch {
+            userToken.value?.let { repository.postComment(it, commentDtoIn, selectedImage!!.id, pageSize) }
+        }
+    }
+
+    fun deleteComment(commentId: Int) {
+        scope.launch {
+            repository.deleteComment(userToken.value!!, commentId, selectedImage!!.id)
         }
     }
 }

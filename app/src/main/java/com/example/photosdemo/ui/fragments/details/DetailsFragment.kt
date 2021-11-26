@@ -1,5 +1,6 @@
 package com.example.photosdemo.ui.fragments.details
 
+import android.app.AlertDialog
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -10,6 +11,9 @@ import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import coil.load
+import com.example.photosdemo.data.models.comment.CommentDtoIn
+import com.example.photosdemo.data.models.comment.CommentDtoOut
+import com.example.photosdemo.data.remote.SessionManager
 import com.example.photosdemo.databinding.FragmentDetailsBinding
 import com.example.photosdemo.viewmodel.PhotosViewModel
 import java.text.ParseException
@@ -23,6 +27,10 @@ class DetailsFragment : Fragment() {
     private val binding get() = _binding!!
     private lateinit var adapter: DetailsAdapter
     private lateinit var viewModel: PhotosViewModel
+    private lateinit var sessionManager: SessionManager
+    private val comments = mutableListOf<CommentDtoOut?>()
+
+    private var alertDialog: AlertDialog? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -36,8 +44,9 @@ class DetailsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        sessionManager = SessionManager(requireContext())
         val image = viewModel.selectedImage
-        adapter = DetailsAdapter()
+        adapter = DetailsAdapter(this)
 
         binding.apply {
             recyclerView.adapter = adapter
@@ -61,7 +70,37 @@ class DetailsFragment : Fragment() {
                     Log.d("!!!e", e.message.toString())
                 }
             }
+
+            viewModel.getComments(sessionManager.fetchAuthToken()!!).observe(viewLifecycleOwner) { result ->
+                comments.clear()
+                result.data?.let { comments.addAll(it) }
+                adapter.submitList(result.data)
+            }
+
+            sendButton.setOnClickListener {
+            val commentDtoIn = CommentDtoIn(editComment.text.toString())
+                viewModel.postComment(commentDtoIn)
+            }
         }
+    }
+
+    fun showDeleteDialog(position: Int) {
+        val builder = AlertDialog.Builder(activity)
+        builder.run {
+            setTitle("Delete")
+            setMessage("You want to delete comment?")
+            setPositiveButton("Yes") { _, _ ->
+                deleteComment(position)
+            }
+            setNegativeButton("Cancel") { _, _ ->
+            }
+        }
+        alertDialog = builder.create()
+        alertDialog?.show()
+    }
+
+    private fun deleteComment(position: Int) {
+        viewModel.deleteComment(comments[position]!!.id)
     }
 
     override fun onDestroyView() {

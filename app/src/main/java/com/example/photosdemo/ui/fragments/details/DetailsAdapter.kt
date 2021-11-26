@@ -1,32 +1,49 @@
 package com.example.photosdemo.ui.fragments.details
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.photosdemo.R
+import com.example.photosdemo.data.models.comment.CommentDtoOut
+import com.example.photosdemo.databinding.DetailsLayoutBinding
 
 class DetailsAdapter(
-): RecyclerView.Adapter<DetailsAdapter.DetailsViewHolder>() {
-
-    class DetailsViewHolder (itemView: View): RecyclerView.ViewHolder(itemView){
-        val comment = itemView.findViewById<TextView>(R.id.comment)
-        val date = itemView.findViewById<TextView>(R.id.date)
-    }
+    val fragment: DetailsFragment
+    ) : ListAdapter<CommentDtoOut, DetailsAdapter.DetailsViewHolder>(CommentComparator())  {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DetailsViewHolder {
-        val itemView =
-            LayoutInflater.from(parent.context).inflate(R.layout.details_layout, parent, false)
-        return DetailsViewHolder(itemView)
+        val binding = DetailsLayoutBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val holder = DetailsViewHolder(binding)
+
+        holder.itemView.setOnLongClickListener {
+            fragment.showDeleteDialog(holder.absoluteAdapterPosition)
+            true
+        }
+        return holder
     }
 
     override fun onBindViewHolder(holder: DetailsViewHolder, position: Int) {
-//        holder.comment.text =
-//        holder.date.text =
+        val currentItem = getItem(position)
+        if (currentItem != null) {
+            holder.bind(currentItem)
+        }
     }
 
-    override fun getItemCount(): Int {
-        return 1
+    class DetailsViewHolder(private val binding: DetailsLayoutBinding): RecyclerView.ViewHolder(binding.root) {
+        fun bind(data: CommentDtoOut) {
+            binding.apply {
+                comment.text = data.text
+                date.text = data.date.toString()
+            }
+        }
+    }
+
+    class CommentComparator : DiffUtil.ItemCallback<CommentDtoOut>() {
+        override fun areItemsTheSame(oldItem: CommentDtoOut, newItem: CommentDtoOut) =
+            oldItem.id == newItem.id
+
+        override fun areContentsTheSame(oldItem: CommentDtoOut, newItem: CommentDtoOut) =
+            oldItem == newItem
     }
 }

@@ -1,5 +1,5 @@
 package com.example.photosdemo.data.models.comment
 
-class CommentDtoIn(
+data class CommentDtoIn(
     val text: String
 )

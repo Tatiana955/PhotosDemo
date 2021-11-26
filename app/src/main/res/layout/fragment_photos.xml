@@ -28,5 +28,5 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginEnd="10dp"
         android:layout_marginBottom="10dp"
-        android:contentDescription="Add" />
+        android:contentDescription="@string/add_photo" />
 </androidx.constraintlayout.widget.ConstraintLayout>
