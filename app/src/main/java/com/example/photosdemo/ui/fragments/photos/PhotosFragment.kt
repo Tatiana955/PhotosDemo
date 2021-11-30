@@ -1,14 +1,10 @@
 package com.example.photosdemo.ui.fragments.photos
 
-import android.Manifest
 import android.app.AlertDialog
-import android.content.Context
-import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.location.Location
 import android.location.LocationListener
-import android.location.LocationManager
 import android.net.Uri
 import android.os.Bundle
 import android.util.Base64
@@ -17,8 +13,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -43,12 +37,11 @@ class PhotosFragment : Fragment(), LocationListener {
     private var navController: NavController? = null
     private lateinit var viewModel: PhotosViewModel
     private lateinit var sessionManager: SessionManager
+    private var token: String? = null
     private lateinit var adapter: PhotosAdapter
     private val photos = mutableListOf<ImageDtoOut?>()
 
     private var latestTmpUri: Uri? = null
-    private lateinit var locationManager: LocationManager
-    private val locationPermissionCode = 2
     private var latitude: Double? = null
     private var longitude: Double? = null
 
@@ -57,7 +50,6 @@ class PhotosFragment : Fragment(), LocationListener {
     private val takeImageResult = registerForActivityResult(ActivityResultContracts.TakePicture()) { isSuccess ->
         if (isSuccess) {
             val timeStamp = SimpleDateFormat("yyyyMMdd", Locale.getDefault()).format(Date())
-            getLocation()
             latestTmpUri?.let { uri ->
                 val image = ImageDtoIn(
                     encode(uri),
@@ -65,7 +57,7 @@ class PhotosFragment : Fragment(), LocationListener {
                     latitude,
                     longitude
                 )
-                viewModel.postImageOut(image)
+                viewModel.postImageOut(image, token!!)
             }
         }
     }
@@ -84,16 +76,21 @@ class PhotosFragment : Fragment(), LocationListener {
         super.onViewCreated(view, savedInstanceState)
         navController = findNavController()
         sessionManager = SessionManager(requireContext())
+        token = sessionManager.fetchAuthToken()
         adapter = PhotosAdapter(this)
 
         binding.apply {
             recyclerView.adapter = adapter
             recyclerView.layoutManager = GridLayoutManager(requireContext(), 3)
 
-            viewModel.getImages(sessionManager.fetchAuthToken()!!).observe(viewLifecycleOwner) { result ->
-                photos.clear()
-                result.data?.let { photos.addAll(it) }
-                adapter.submitList(result.data)
+            if (token != null) {
+                viewModel.getImages(token!!).observe(viewLifecycleOwner) { result ->
+                    photos.clear()
+                    result.data?.let { photos.addAll(it) }
+                    adapter.submitList(result.data)
+                }
+            } else {
+                navController?.navigate(R.id.loginFragment)
             }
 
             floatingActionButton.setOnClickListener {
@@ -126,16 +123,6 @@ class PhotosFragment : Fragment(), LocationListener {
             deleteOnExit()
         }
         return FileProvider.getUriForFile(requireContext(), "${BuildConfig.APPLICATION_ID}.provider", tmpFile)
-    }
-
-    private fun getLocation() {
-        locationManager = activity?.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        if ((ContextCompat.checkSelfPermission(requireContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)) {
-            ActivityCompat.requestPermissions(requireActivity(),
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), locationPermissionCode)
-        }
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 5f, this)
     }
 
     override fun onLocationChanged(location: Location) {
@@ -174,7 +161,7 @@ class PhotosFragment : Fragment(), LocationListener {
     }
 
     private fun deleteImage(position: Int) {
-        viewModel.deleteImageOut(photos[position]!!.id)
+        viewModel.deleteImageOut(photos[position]!!.id, token!!)
     }
 
     override fun onDestroyView() {

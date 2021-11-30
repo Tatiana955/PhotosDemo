@@ -9,8 +9,10 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import com.example.photosdemo.R
+import com.example.photosdemo.data.remote.SessionManager
 import com.example.photosdemo.databinding.FragmentLoginBinding
 import com.example.photosdemo.viewmodel.PhotosViewModel
+import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayoutMediator
 
 class LoginFragment : Fragment() {
@@ -18,6 +20,7 @@ class LoginFragment : Fragment() {
     private val binding get() = _binding!!
     private var navController: NavController? = null
     private lateinit var viewModel: PhotosViewModel
+    private lateinit var sessionManager: SessionManager
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -32,6 +35,7 @@ class LoginFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         navController = findNavController()
         viewModel = ViewModelProvider(requireActivity())[PhotosViewModel::class.java]
+        sessionManager = SessionManager(requireContext())
 
         val adapter = LoginViewPagerAdapter(this)
         binding.viewPager.adapter = adapter
@@ -45,6 +49,19 @@ class LoginFragment : Fragment() {
                 }
             }
         }.attach()
+
+        viewModel.userToken.observe(requireActivity(), {
+            if (it != null) {
+                sessionManager.saveAuthToken(it)
+                navController?.navigate(R.id.photosFragment)
+            } else {
+                Snackbar.make(
+                    requireView(),
+                    "Check the correctness of the entered data",
+                    Snackbar.LENGTH_SHORT
+                ).show()
+            }
+        })
     }
 
     override fun onDestroyView() {

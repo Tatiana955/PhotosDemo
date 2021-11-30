@@ -28,6 +28,7 @@ class DetailsFragment : Fragment() {
     private lateinit var adapter: DetailsAdapter
     private lateinit var viewModel: PhotosViewModel
     private lateinit var sessionManager: SessionManager
+    private var token: String? = null
     private val comments = mutableListOf<CommentDtoOut?>()
 
     private var alertDialog: AlertDialog? = null
@@ -45,6 +46,7 @@ class DetailsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         sessionManager = SessionManager(requireContext())
+        token = sessionManager.fetchAuthToken()
         val image = viewModel.selectedImage
         adapter = DetailsAdapter(this)
 
@@ -79,7 +81,7 @@ class DetailsFragment : Fragment() {
 
             sendButton.setOnClickListener {
             val commentDtoIn = CommentDtoIn(editComment.text.toString())
-                viewModel.postComment(commentDtoIn)
+                token?.let { token -> viewModel.postComment(commentDtoIn, token) }
             }
         }
     }
@@ -100,7 +102,7 @@ class DetailsFragment : Fragment() {
     }
 
     private fun deleteComment(position: Int) {
-        viewModel.deleteComment(comments[position]!!.id)
+        token?.let { viewModel.deleteComment(comments[position]!!.id, it) }
     }
 
     override fun onDestroyView() {

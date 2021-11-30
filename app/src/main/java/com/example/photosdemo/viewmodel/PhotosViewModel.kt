@@ -44,32 +44,32 @@ class PhotosViewModel(
         return data.asLiveData()
     }
 
-    fun postImageOut(imageDtoIn: ImageDtoIn) {
+    fun postImageOut(imageDtoIn: ImageDtoIn, token: String) {
         scope.launch {
-            userToken.value?.let { repository.postImageOut(it, imageDtoIn, pageSize) }
+            repository.postImageOut(token, imageDtoIn, pageSize)
         }
     }
 
-    fun deleteImageOut(id: Int) {
+    fun deleteImageOut(id: Int, token: String) {
         scope.launch {
-            repository.deleteImageOut(userToken.value!!, id)
+            repository.deleteImageOut(token, id)
         }
     }
 
     fun getComments(token: String): LiveData<Resource<MutableList<CommentDtoOut>>> {
-        val data = repository.getComments(token, selectedImage!!.id,pageSize)
+        val data = repository.getComments(token, selectedImage!!.id, pageSize)
         return data.asLiveData()
     }
 
-    fun postComment(commentDtoIn: CommentDtoIn) {
+    fun postComment(commentDtoIn: CommentDtoIn, token: String) {
         scope.launch {
-            userToken.value?.let { repository.postComment(it, commentDtoIn, selectedImage!!.id, pageSize) }
+            repository.postComment(token, commentDtoIn, selectedImage!!.id, pageSize)
         }
     }
 
-    fun deleteComment(commentId: Int) {
+    fun deleteComment(commentId: Int, token: String) {
         scope.launch {
-            repository.deleteComment(userToken.value!!, commentId, selectedImage!!.id)
+            repository.deleteComment(token, commentId, selectedImage!!.id)
         }
     }
 }
