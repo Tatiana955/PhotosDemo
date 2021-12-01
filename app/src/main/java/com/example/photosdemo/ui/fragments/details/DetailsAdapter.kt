@@ -8,12 +8,12 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.photosdemo.data.models.comment.CommentDtoOut
 import com.example.photosdemo.databinding.DetailsLayoutBinding
+import com.example.photosdemo.util.toDate
 import org.json.JSONObject
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
-import java.util.*
 
 class DetailsAdapter(
     val fragment: DetailsFragment
@@ -38,15 +38,12 @@ class DetailsAdapter(
     }
 
     class DetailsViewHolder(private val binding: DetailsLayoutBinding): RecyclerView.ViewHolder(binding.root) {
-        private val Int.asDate: Date
-            get() = Date(this.toLong() * 1000L)
-
         fun bind(data: CommentDtoOut) {
             binding.apply {
                 comment.text = data.text
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    val dt = Instant.ofEpochSecond(data.date.toLong())
+                    val dt = Instant.ofEpochSecond(data.date)
                         .atZone(ZoneId.systemDefault())
                         .toLocalDateTime()
                     val parsedDate = LocalDate.parse(dt.toString(), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"))
@@ -54,7 +51,7 @@ class DetailsAdapter(
                 } else {
                     val json = JSONObject()
                     json.put("date", data.date)
-                    val d = json.getInt("date").asDate
+                    val d = json.getInt("date").toDate()
                     val year = d.toString().substring(d.toString().length - 4)
                     val result = "${d.date}.${d.month.plus(1)}.${year}"
                     date.text = result

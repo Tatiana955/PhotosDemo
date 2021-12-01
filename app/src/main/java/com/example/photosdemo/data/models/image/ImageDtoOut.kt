@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey
 data class ImageDtoOut(
     @PrimaryKey var id: Int,
     var url: String?,
-    var date: Int?,
+    var date: Long?,
     var lat: Double?,
     var lng: Double?
     )

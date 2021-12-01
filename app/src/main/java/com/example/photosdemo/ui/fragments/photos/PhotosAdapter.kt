@@ -1,7 +1,6 @@
 package com.example.photosdemo.ui.fragments.photos
 
 import android.os.Build
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -10,9 +9,11 @@ import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.example.photosdemo.data.models.image.ImageDtoOut
 import com.example.photosdemo.databinding.PhotoLayoutBinding
-import java.text.ParseException
-import java.text.SimpleDateFormat
+import com.example.photosdemo.util.toDate
+import org.json.JSONObject
+import java.time.Instant
 import java.time.LocalDate
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.*
 
@@ -49,19 +50,20 @@ class PhotosAdapter(
                 photo.load(data.url)
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    val parsedDate = LocalDate.parse(data.date.toString(), DateTimeFormatter.ofPattern("yyyyMMdd"))
+                    val dt = data.date?.let {
+                        Instant.ofEpochSecond(it)
+                            .atZone(ZoneId.systemDefault())
+                            .toLocalDateTime()
+                    }
+                    val parsedDate = LocalDate.parse(dt.toString(), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"))
                     date.text = parsedDate.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
                 } else {
-                    val strDate = data.date.toString()
-                    val formatter = SimpleDateFormat("yyyyMMdd", Locale.getDefault())
-                    try {
-                        val d: Date? = formatter.parse(strDate)
-                        val year = d.toString().substring(d.toString().length - 4)
-                        val result = "${d?.date}.${d?.month?.plus(1)}.${year}"
-                        date.text = result
-                    } catch (e: ParseException) {
-                        Log.d("!!!e", e.message.toString())
-                    }
+                    val json = JSONObject()
+                    json.put("date", data.date)
+                    val d = json.getInt("date").toDate()
+                    val year = d.toString().substring(d.toString().length - 4)
+                    val result = "${d.date}.${d.month.plus(1)}.${year}"
+                    date.text = result
                 }
             }
         }

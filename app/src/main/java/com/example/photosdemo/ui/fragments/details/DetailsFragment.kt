@@ -3,7 +3,6 @@ package com.example.photosdemo.ui.fragments.details
 import android.app.AlertDialog
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -15,12 +14,13 @@ import com.example.photosdemo.data.models.comment.CommentDtoIn
 import com.example.photosdemo.data.models.comment.CommentDtoOut
 import com.example.photosdemo.data.remote.SessionManager
 import com.example.photosdemo.databinding.FragmentDetailsBinding
+import com.example.photosdemo.util.toDate
 import com.example.photosdemo.viewmodel.PhotosViewModel
-import java.text.ParseException
-import java.text.SimpleDateFormat
-import java.time.LocalDate
+import org.json.JSONObject
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
-import java.util.*
 
 class DetailsFragment : Fragment() {
     private var _binding: FragmentDetailsBinding? = null
@@ -57,20 +57,20 @@ class DetailsFragment : Fragment() {
             photo.load(image?.url)
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                val parsedDate =
-                    LocalDate.parse(image?.date.toString(), DateTimeFormatter.ofPattern("yyyyMMdd"))
-                date.text = parsedDate.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
-            } else {
-                val strDate = image?.date.toString()
-                val formatter = SimpleDateFormat("yyyyMMdd", Locale.getDefault())
-                try {
-                    val d: Date? = formatter.parse(strDate)
-                    val year = d.toString().substring(d.toString().length - 4)
-                    val result = "${d?.date}.${d?.month?.plus(1)}.${year}"
-                    date.text = result
-                } catch (e: ParseException) {
-                    Log.d("!!!e", e.message.toString())
+                val dt = image?.date?.let {
+                    Instant.ofEpochSecond(it)
+                        .atZone(ZoneId.systemDefault())
+                        .toLocalDateTime()
                 }
+                val parsedDate = LocalDateTime.parse(dt.toString(), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"))
+                date.text = parsedDate.format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"))
+            } else {
+                val json = JSONObject()
+                json.put("date", image?.date)
+                val d = json.getInt("date").toDate()
+                val year = d.toString().substring(d.toString().length - 4)
+                val result = "${d.date}.${d.month.plus(1)}.${year} ${d.hours}:${d.minutes}"
+                date.text = result
             }
 
             viewModel.getComments(sessionManager.fetchAuthToken()!!).observe(viewLifecycleOwner) { result ->

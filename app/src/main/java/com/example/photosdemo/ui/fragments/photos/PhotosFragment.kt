@@ -28,8 +28,6 @@ import com.example.photosdemo.databinding.FragmentPhotosBinding
 import com.example.photosdemo.viewmodel.PhotosViewModel
 import java.io.ByteArrayOutputStream
 import java.io.File
-import java.text.SimpleDateFormat
-import java.util.*
 
 class PhotosFragment : Fragment(), LocationListener {
     private var _binding: FragmentPhotosBinding? = null
@@ -49,11 +47,11 @@ class PhotosFragment : Fragment(), LocationListener {
 
     private val takeImageResult = registerForActivityResult(ActivityResultContracts.TakePicture()) { isSuccess ->
         if (isSuccess) {
-            val timeStamp = SimpleDateFormat("yyyyMMdd", Locale.getDefault()).format(Date())
+            val date = System.currentTimeMillis() / 1000
             latestTmpUri?.let { uri ->
                 val image = ImageDtoIn(
                     encode(uri),
-                    timeStamp.toInt(),
+                    date,
                     latitude,
                     longitude
                 )
