@@ -25,6 +25,7 @@ import com.example.photosdemo.data.models.image.ImageDtoIn
 import com.example.photosdemo.data.models.image.ImageDtoOut
 import com.example.photosdemo.data.remote.SessionManager
 import com.example.photosdemo.databinding.FragmentPhotosBinding
+import com.example.photosdemo.util.withDelay
 import com.example.photosdemo.viewmodel.PhotosViewModel
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -145,17 +146,27 @@ class PhotosFragment : Fragment(), LocationListener {
 
     fun showDeleteDialog(position: Int) {
         val builder = AlertDialog.Builder(activity)
+        viewModel.selectedImage = photos[position]
         builder.run {
             setTitle("Delete")
             setMessage("You want to delete photo?")
             setPositiveButton("Yes") { _, _ ->
-                deleteImage(position)
+                deleteAllComments()
+                withDelay(500) { deleteImage(position) }
             }
             setNegativeButton("Cancel") { _, _ ->
             }
         }
         alertDialog = builder.create()
         alertDialog?.show()
+    }
+
+    private fun deleteAllComments() {
+        viewModel.getComments(token!!).observe(viewLifecycleOwner) { result ->
+            for (i in result.data!!) {
+                viewModel.deleteComment(i.id, token!!)
+            }
+        }
     }
 
     private fun deleteImage(position: Int) {
