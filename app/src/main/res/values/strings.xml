@@ -14,4 +14,9 @@
     <string name="log_in">LOG IN</string>
     <string name="sign_up">SIGN UP</string>
     <string name="username">Username</string>
+    <string name="check_password">Check your password</string>
+    <string name="check_login">Check your login</string>
+    <string name="details">Details</string>
+    <string name="login_details">Login must be between 4 and 32 characters long. And must not contain any characters other than: [a–z], [0–9], [_-.@].</string>
+    <string name="password_details">Login must be between 8 and 500 characters long.</string>
 </resources>
