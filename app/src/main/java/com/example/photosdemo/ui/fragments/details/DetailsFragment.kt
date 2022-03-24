@@ -90,7 +90,7 @@ class DetailsFragment : Fragment() {
         val builder = AlertDialog.Builder(activity)
         builder.run {
             setTitle("Delete")
-            setMessage("You want to delete comment?")
+            setMessage("Do you want to delete a comment?")
             setPositiveButton("Yes") { _, _ ->
                 deleteComment(position)
             }

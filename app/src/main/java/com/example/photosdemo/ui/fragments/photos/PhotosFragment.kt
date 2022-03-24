@@ -149,7 +149,7 @@ class PhotosFragment : Fragment(), LocationListener {
         viewModel.selectedImage = photos[position]
         builder.run {
             setTitle("Delete")
-            setMessage("You want to delete photo?")
+            setMessage("Do you want to delete a photo?")
             setPositiveButton("Yes") { _, _ ->
                 deleteAllComments()
                 withDelay(500) { deleteImage(position) }
