@@ -9,21 +9,21 @@
     <fragment
         android:id="@+id/loginFragment"
         android:name="com.example.photosdemo.ui.fragments.login.LoginFragment"
-        android:label="fragment_login"
+        android:label="@string/authorization"
         tools:layout="@layout/fragment_login" />
     <fragment
         android:id="@+id/photosFragment"
         android:name="com.example.photosdemo.ui.fragments.photos.PhotosFragment"
-        android:label="fragment_photos"
+        android:label="@string/photos"
         tools:layout="@layout/fragment_photos" />
     <fragment
         android:id="@+id/detailsFragment"
         android:name="com.example.photosdemo.ui.fragments.details.DetailsFragment"
-        android:label="fragment_details"
+        android:label="@string/details"
         tools:layout="@layout/fragment_details" />
     <fragment
         android:id="@+id/mapsFragment"
         android:name="com.example.photosdemo.ui.fragments.maps.MapsFragment"
-        android:label="fragment_maps"
+        android:label="@string/maps"
         tools:layout="@layout/fragment_maps" />
 </navigation>
